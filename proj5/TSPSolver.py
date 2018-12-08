@@ -45,10 +45,13 @@ class TSPSolver:
 	'''
 
 	def defaultRandomTour( self, time_allowance=60.0 ):
-		# TIME COMPLEXITY: Worst case we get a time complexity of O(n) * the number of possible iterations in 60 seconds
-		# SPACE COMPLEXITY: We need to store a list of cities of size n as well as a permutation each iteration possible.
-		# As we go through each iteration, perm gets overwritten so we don't need to worry about it allocating more space
-		# per iteration thus we get a O(n). All other variables are constant in regard to n
+	# TIME COMPLEXITY: Worst case we get a time complexity of O(n!) where we have to check
+	# every possible permutation.
+	# SPACE COMPLEXITY: We need to store a list of cities of size n for each permutation
+	# attempt as well as for the final answer
+	# As we go through each iteration, perm gets overwritten so we don't need to worry about
+	# it allocating more space per iteration thus we get a O(n). All other variables are constant in
+	# regard to n
 		results = {}
 		cities = self._scenario.getCities()
 		ncities = len(cities)
@@ -171,12 +174,14 @@ class TSPSolver:
 		return route
 
 	def branchAndBound( self, time_allowance=60.0 ):
-		# TIME COMPLEXITY: This function calls various methods: initalizeMatrix which gives a time of O(n^2),
-		# defaultRandomTour, and calcLowerBound which gives a time of O(n^2). This all happens before we start creating
+		# TIME COMPLEXITY: This function calls various methods: initalizeMatrix,
+		# defaultRandomTour, and calcLowerBound. All of these are called before we start creating
 		# states. As we create
-		# states, we call calcLowerBound which gives a time of O(n^2) and worst case, we do this for (n-1)! states. This
+		# states, we call calcLowerBound which gives a time of O(n^2) and worst case, we do this
+		# for (n-1)! states. This
 		# dominates everything outside the loop so we get a time complexity of O(n^2)((n-1)!)
-		# SPACE COMPLEXITY: As we create nodes, we store a matrix of size O(n^2) and worst case we do this for (n-1)! nodes.
+		# SPACE COMPLEXITY: As we create nodes, we store a matrix of size O(n^2) and worst case
+		# we do this for (n-1)! nodes.
 		# Worst case we will also be storing (n-1)! nodes in the priority queue.
 		# Thus for space complexity we get O(n^2)((n-1)!)
 
