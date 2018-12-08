@@ -1,10 +1,32 @@
 #!/usr/bin/python3
 
 
+import itertools
 import math
 import numpy as np
 import random
 import time
+from pprint import pprint
+
+
+
+class HeldKarpSolver:
+    def __init__(self, n):
+        self._subsets = []
+        self._genSubsets(n)
+
+    def _genSubsets(self, n):
+        for i in range(1, n):
+            self._subsets.append((i, ()))
+        for subset_size in range(1, n):
+            for subset in itertools.combinations(range(1, n), subset_size):
+                for i in range(1,n):
+                    if i not in subset:
+                        self._subsets.append((i, subset))
+        self._subsets.append(tuple(range(1,n)))
+        pprint(self._subsets)
+
+
 
 
 
