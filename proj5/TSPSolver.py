@@ -285,4 +285,8 @@ class TSPSolver:
 	'''
 
 	def fancy( self,time_allowance=60.0 ):
-            heldKarp = HeldKarpSolver(4)
+		cities = self._scenario.getCities()
+		ncities = len(cities)
+		matrix = np.zeros(shape=(ncities,ncities))
+		self.initializeMatrix(matrix, ncities, cities)
+		heldKarp = HeldKarpSolver(matrix, 4)

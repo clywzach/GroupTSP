@@ -11,20 +11,20 @@ from pprint import pprint
 
 
 class HeldKarpSolver:
-    def __init__(self, n):
-        self._subsets = []
-        self._genSubsets(n)
+	def __init__(self, costmatrix, n):
+		self._costmatrix = costmatrix
+		self._subsets = {}
+		self._genSubsets(n)
 
-    def _genSubsets(self, n):
-        for i in range(1, n):
-            self._subsets.append((i, ()))
-        for subset_size in range(1, n):
-            for subset in itertools.combinations(range(1, n), subset_size):
-                for i in range(1,n):
-                    if i not in subset:
-                        self._subsets.append((i, subset))
-        self._subsets.append(tuple(range(1,n)))
-        pprint(self._subsets)
+	def _genSubsets(self, n):
+		for i in range(1, n):
+			self._subsets[(i, ())] = [self._costmatrix[0][i], 0]
+		for subset_size in range(1, n):
+			for subset in itertools.combinations(range(1, n), subset_size):
+				for i in range(1,n):
+					if i not in subset:
+						self._subsets[(i, subset)] = [None, None]
+		pprint(self._subsets)
 
 
 
@@ -145,7 +145,7 @@ class Scenario:
 		for i in range(ncities):
 			can_delete[route_keep[i],route_keep[(i+1)%ncities]] = False
 
-		# Now remove edges until 
+		# Now remove edges until
 		while num_to_remove > 0:
 			if deterministic:
 				src = random.randint(0,ncities-1)
@@ -181,7 +181,7 @@ class City:
 	''' <summary>
 		How much does it cost to get from this city to the destination?
 		Note that this is an asymmetric cost function.
-		 
+
 		In advanced mode, it returns infinity when there is no connection.
 		</summary> '''
 	MAP_SCALE = 1000.0
@@ -208,4 +208,3 @@ class City:
 
 
 		return int(math.ceil(cost * self.MAP_SCALE))
-
