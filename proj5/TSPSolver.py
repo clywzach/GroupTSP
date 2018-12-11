@@ -95,8 +95,72 @@ class TSPSolver:
 	'''
 
 	def greedy( self,time_allowance=60.0 ):
-		
-		pass
+		results = {}
+		cities = self._scenario.getCities()
+		allGreedySolutions = []
+		start_time = time.time()
+		count = 0
+		bssf = None
+		bestCost = np.Infinity
+		foundTour = False
+
+		while not foundTour and time.time() - start_time < time_allowance:
+			for i in range(len(cities)):
+				greedyList = []
+				restOfCities = []
+				start = cities[i]
+				greedyList.append(start)
+
+				if i != len(cities) - 1:
+					restOfCities = cities[i+1:]
+				if i != 0:
+					restOfCities.extend(cities[0:i])
+
+				cityToExplore = start
+
+				while len(restOfCities) > 0:
+					cheapestCost = np.Infinity
+					nextBestCity = None
+					for nextCity in restOfCities:
+						#find the cheapest city
+						if cityToExplore.costTo(nextCity) < cheapestCost:
+							cheapestCost = cityToExplore.costTo(nextCity)
+							nextBestCity = nextCity
+
+					#If next best city is none, we don't add this to the master list
+					if nextBestCity is None:
+						break
+					cityToExplore = nextBestCity
+					greedyList.append(nextBestCity)
+					restOfCities.remove(nextBestCity)
+
+				#make sure it's possible to get back to start city
+				if cityToExplore.costTo(start) < np.Infinity:
+					allGreedySolutions.append(TSPSolution(greedyList))
+
+
+			#Now go through all greedy solutions, find best one
+			for sol in allGreedySolutions:
+				count += 1
+				if sol._costOfRoute() < bestCost:
+					bssf = sol
+					bestCost = sol._costOfRoute()
+			foundTour = True
+
+		end_time = time.time()
+		results['time'] = end_time - start_time
+		results['count'] = count
+		results['max'] = None
+		results['total'] = None
+		results['pruned'] = None
+
+		if bssf is None:
+			results['cost'] = np.Infinity
+			results['soln'] = None
+		else:
+			results['cost'] = bestCost
+			results['soln'] = bssf
+		return results
 
 
 
