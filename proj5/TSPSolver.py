@@ -135,7 +135,7 @@ class TSPSolver:
 					restOfCities.remove(nextBestCity)
 
 				#make sure it's possible to get back to start city
-				if cityToExplore.costTo(start) < np.Infinity:
+				if cityToExplore.costTo(start) < np.Infinity and len(greedyList) == len(cities):
 					allGreedySolutions.append(TSPSolution(greedyList))
 
 
