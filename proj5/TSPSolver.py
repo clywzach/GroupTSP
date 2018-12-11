@@ -350,8 +350,21 @@ class TSPSolver:
 	'''
 
 	def fancy( self,time_allowance=60.0 ):
+		start_time = time.time()
 		cities = self._scenario.getCities()
 		ncities = len(cities)
 		matrix = np.zeros(shape=(ncities,ncities))
+		#matrix = [[0, 1, 15, 6],[2, 0, 7, 3], [9, 6, 0, 12], [10, 4, 8, 0]]
 		self.initializeMatrix(matrix, ncities, cities)
-		heldKarp = HeldKarpSolver(matrix, 4)
+		heldKarp = HeldKarpSolver(matrix, ncities)
+		cost, route = heldKarp.solve(start_time)
+		end_time = time.time()
+		if cost is not None and route is not None:
+			self.results['cost'] = cost
+			self.results['soln'] = self.convertIndicesToRoute(route[:-1], cities)
+		else:
+			self.results['cost'] = math.inf
+			self.results['soln'] = None
+		self.results['time'] = end_time - start_time
+		self.results['count'] = -1
+		return self.results
