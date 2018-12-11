@@ -23,9 +23,46 @@ class HeldKarpSolver:
 			for subset in itertools.combinations(range(1, n), subset_size):
 				for i in range(1,n):
 					if i not in subset:
-						self._subsets[(i, subset)] = [None, None]
-		pprint(self._subsets)
+						self._subsets[(i, tuple(sorted(set(subset))))] = [None, None]
+		self._subsets[(0, tuple(range(1, n)))] = [None, None]
 
+	def findTour(self, city, cityset):
+		cityset = set(cityset)
+		cost, prev = self._subsets[(city, tuple(sorted(cityset)))]
+		route = [prev, city]
+		while prev != 0:
+			cityset -= set([prev])
+			_, prev = self._subsets[(prev, tuple(sorted(cityset)))]
+			route.insert(0, prev)
+		return cost, route
+
+
+	def calcCost(self, city, cityset):
+		mincost = math.inf
+		prev = None
+		for k in cityset:
+			cost = self._subsets[k, tuple(sorted(set(cityset) - set([k])))][0] + self._costmatrix[k][city]
+			if cost < mincost:
+				mincost = cost
+				prev = k
+		return (mincost, prev)
+
+	def solve(self, start_time, time_allowance=60.0):
+		setsize = 1
+		n = len(self._costmatrix)
+		while setsize < n and time.time() - start_time < time_allowance:
+			for key in self._subsets:
+				city, cityset = key
+				if len(cityset) == setsize:
+					cost, prev = self.calcCost(city, cityset)
+					self._subsets[key][0] = cost
+					self._subsets[key][1] = prev
+			setsize += 1
+		if not setsize < n:
+			return self.findTour(0, tuple(range(1, n)))
+		else:
+			print("timeout")
+			return None, None
 
 
 
