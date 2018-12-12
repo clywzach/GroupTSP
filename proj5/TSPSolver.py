@@ -251,6 +251,7 @@ class TSPSolver:
 		# Thus for space complexity we get O(n^2)((n-1)!)
 
 		# initialize variables
+		time_allowance = 600.0
 		start_time = time.time()
 		priorityQueue = []
 		heapq.heapify(priorityQueue)
@@ -357,7 +358,7 @@ class TSPSolver:
 		#matrix = [[0, 1, 15, 6],[2, 0, 7, 3], [9, 6, 0, 12], [10, 4, 8, 0]]
 		self.initializeMatrix(matrix, ncities, cities)
 		heldKarp = HeldKarpSolver(matrix, ncities)
-		cost, route = heldKarp.solve(start_time, time_allowance)
+		cost, route = heldKarp.solve(start_time, 600.0)
 		end_time = time.time()
 		if cost is not None and route is not None:
 			self.results['cost'] = cost
