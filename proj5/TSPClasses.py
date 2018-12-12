@@ -7,6 +7,7 @@ import numpy as np
 import random
 import time
 from pprint import pprint
+from OrderedSet import *
 
 
 
@@ -23,16 +24,16 @@ class HeldKarpSolver:
 			for subset in itertools.combinations(range(1, n), subset_size):
 				for i in range(1,n):
 					if i not in subset:
-						self._subsets[(i, tuple(sorted(set(subset))))] = [None, None]
+						self._subsets[(i, tuple(list(subset)))] = [None, None]
 		self._subsets[(0, tuple(range(1, n)))] = [None, None]
 
 	def findTour(self, city, cityset):
-		cityset = set(cityset)
-		cost, prev = self._subsets[(city, tuple(sorted(cityset)))]
+		cityset = OrderedSet(list(cityset))
+		cost, prev = self._subsets[(city, tuple(cityset))]
 		route = [prev, city]
 		while prev != 0:
-			cityset -= set([prev])
-			_, prev = self._subsets[(prev, tuple(sorted(cityset)))]
+			cityset -= OrderedSet([prev])
+			_, prev = self._subsets[(prev, tuple(cityset))]
 			route.insert(0, prev)
 		return cost, route
 
@@ -41,7 +42,7 @@ class HeldKarpSolver:
 		mincost = math.inf
 		prev = None
 		for k in cityset:
-			cost = self._subsets[k, tuple(sorted(set(cityset) - set([k])))][0] + self._costmatrix[k][city]
+			cost = self._subsets[k, tuple(OrderedSet(cityset) -OrderedSet(list([k])))][0] + self._costmatrix[k][city]
 			if cost < mincost:
 				mincost = cost
 				prev = k
@@ -54,7 +55,8 @@ class HeldKarpSolver:
 			for key in self._subsets:
 				city, cityset = key
 				if len(cityset) == setsize:
-					cost, prev = self.calcCost(city, cityset)
+					listCitySet = list(cityset)
+					cost, prev = self.calcCost(city, listCitySet)
 					self._subsets[key][0] = cost
 					self._subsets[key][1] = prev
 			setsize += 1
